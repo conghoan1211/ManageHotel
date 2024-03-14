@@ -33,20 +33,46 @@ namespace HotelLibrary.DataAccess
             }
         }
 
-        public IEnumerable<Account> GetList(int roleID)
+        public IEnumerable<Account> GetList(int roleID, int type_sort)
         {
             IDataReader dataReader = null;
-            string SQLSelect = "Select acc_id, username, password , citizen_id, phone, address, g.gender_name, DOB, r.role_name from account a " +
+            string SQLSelect = "Select acc_id, username, password , citizen_id, phone, address, g.gender_id, g.gender_name, DOB, r.role_id, r.role_name from account a " +
                 "join Role r on a.role_id = r.role_id " +
-                "join Gender g on a.gender = g.gender_id " +
-                "where r.role_id = @roleID " +
-                "order by acc_id DESC";
+                "join Gender g on a.gender = g.gender_id ";
+            if (roleID != -1)
+            {
+                SQLSelect += "where r.role_id = @roleID ";
+            }
+            if (type_sort == 0)
+            {
+                SQLSelect += "order by acc_id ASC";
+            }
+            else if (type_sort == 1)
+            {
+                SQLSelect += "order by acc_id DESC";
+            }
+            else if (type_sort == 2)
+            {
+                SQLSelect += "order by username ASC";
+            }
+            else if (type_sort == 3)
+            {
+                SQLSelect += "order by username DESC";
+            }
 
             var accounts = new List<Account>();
             try
             {
-                var param = dataProvider.CreateParameter("@roleID", 0, roleID, DbType.Int32);
-                dataReader = dataProvider.GetDataReader(SQLSelect, CommandType.Text, out connection, param);
+                if (roleID != -1)
+                {
+                    var param = dataProvider.CreateParameter("@roleID", 0, roleID, DbType.Int32);
+                    dataReader = dataProvider.GetDataReader(SQLSelect, CommandType.Text, out connection, param);
+                }
+                else
+                {
+                    dataReader = dataProvider.GetDataReader(SQLSelect, CommandType.Text, out connection);
+                }
+
                 while (dataReader.Read())
                 {
                     accounts.Add(new Account
@@ -57,9 +83,17 @@ namespace HotelLibrary.DataAccess
                         CitizenID = dataReader.GetString(3),
                         Phone = dataReader.GetString(4),
                         Address = dataReader.GetString(5),
-                        Gender = dataReader.GetString(6),
-                        DOB = dataReader.GetDateTime(7),
-                        Role = dataReader.GetString(8)
+                        Gender = new Gender
+                        {
+                            GenderId = dataReader.GetInt32(6),
+                            GenderName = dataReader.GetString(7),
+                        },
+                        DOB = dataReader.GetDateTime(8),
+                        Role = new Role
+                        {
+                            RoleId = dataReader.GetInt32(9),
+                            RoleName = dataReader.GetString(10),
+                        }
                     });
                 }
             }
@@ -81,28 +115,34 @@ namespace HotelLibrary.DataAccess
             IDataReader dataReader = null;
             try
             {
-                string SQLGet = "Select acc_id, username, password , citizen_id, phone, address, g.gender_name, DOB, r.role_name from account a " +
+                string SQLGet = "Select acc_id, username, password , citizen_id, phone, address, g.gender_id, g.gender_name, DOB, r.role_id, r.role_name from account a " +
                 "join Role r on a.role_id = r.role_id " +
-                "join Gender g on a.gender = g.gender_id ";
-                if (accountID == -1)
-                {
-                    SQLGet += " where acc_id = @accountID";
-                    var param = dataProvider.CreateParameter("@accountID", 0, accountID, DbType.Int32);
-                    dataReader = dataProvider.GetDataReader(SQLGet, CommandType.Text, out connection, param);
-                }
+                "join Gender g on a.gender = g.gender_id " +
+                "where acc_id = @accountID";
+                var param = dataProvider.CreateParameter("@accountID", 0, accountID, DbType.Int32);
+                dataReader = dataProvider.GetDataReader(SQLGet, CommandType.Text, out connection, param);
+
                 if (dataReader.Read())
                 {
                     acc = new Account
                     {
                         AccID = dataReader.GetInt32(0),
+                        Username = dataReader.GetString(1),
                         Password = dataReader.GetString(2),
                         CitizenID = dataReader.GetString(3),
                         Phone = dataReader.GetString(4),
                         Address = dataReader.GetString(5),
-                        Gender = dataReader.GetString(6),
-                        DOB = dataReader.GetDateTime(7),
-                        Role = dataReader.GetString(8)
-
+                        Gender = new Gender
+                        {
+                            GenderId = dataReader.GetInt32(6),
+                            GenderName = dataReader.GetString(7),
+                        },
+                        DOB = dataReader.GetDateTime(8),
+                        Role = new Role
+                        {
+                            RoleId = dataReader.GetInt32(9),
+                            RoleName = dataReader.GetString(10),
+                        }
                     };
                 }
             }
@@ -229,7 +269,7 @@ namespace HotelLibrary.DataAccess
             IDataReader dataReader = null;
             try
             {
-                string SQLGet = "select acc_id, username, password , citizen_id, phone, address, g.gender_name, DOB, r.role_name from account a " +
+                string SQLGet = "Select acc_id, username, password , citizen_id, phone, address, g.gender_id, g.gender_name, DOB, r.role_id, r.role_name from account a " +
                      "join Role r on a.role_id = r.role_id " +
                      "join Gender g on a.gender = g.gender_id " +
                      "where username = @username and password = @password ";
@@ -247,9 +287,17 @@ namespace HotelLibrary.DataAccess
                         CitizenID = dataReader.GetString(3),
                         Phone = dataReader.GetString(4),
                         Address = dataReader.GetString(5),
-                        Gender = dataReader.GetString(6),
-                        DOB = dataReader.GetDateTime(7),
-                        Role = dataReader.GetString(8)
+                        Gender = new Gender
+                        {
+                            GenderId = dataReader.GetInt32(6),
+                            GenderName = dataReader.GetString(7),
+                        },
+                        DOB = dataReader.GetDateTime(8),
+                        Role = new Role
+                        {
+                            RoleId = dataReader.GetInt32(9),
+                            RoleName = dataReader.GetString(10),
+                        }
                     };
                 }
             }
@@ -273,15 +321,19 @@ namespace HotelLibrary.DataAccess
             return acc;
         }
 
-        public bool IsUsernameExist(string username)
+        public bool IsUsernameExist(string username, int accid)
         {
             IDataReader dataReader = null;
             try
             {
-                string SQLCheckExistence = "SELECT * FROM account WHERE username = @username";
+                string SQLCheckExistence = "SELECT * FROM account WHERE username = @username ";
+                if (accid != -1)
+                {
+                    SQLCheckExistence += "and acc_id != " + accid;
+                }
+
                 var parameters = new List<SqlParameter>();
                 parameters.Add(dataProvider.CreateParameter("@username", 0, username.Trim(), DbType.String));
-
                 dataReader = dataProvider.GetDataReader(SQLCheckExistence, CommandType.Text, out connection, parameters.ToArray());
 
                 return dataReader.Read();
@@ -300,6 +352,119 @@ namespace HotelLibrary.DataAccess
             }
         }
 
+        public Account GetByName(string username)
+        {
+            Account acc = null;
+            IDataReader dataReader = null;
+            try
+            {
+                string SQLGet = "SELECT acc_id, username, password, citizen_id, phone, address, g.gender_id, g.gender_name, DOB, r.role_id, r.role_name " +
+                                "FROM account a " +
+                                "JOIN Role r ON a.role_id = r.role_id " +
+                                "JOIN Gender g ON a.gender = g.gender_id " +
+                                "WHERE username LIKE @username";
+
+                var param = dataProvider.CreateParameter("@username", 0, "%" + username + "%", DbType.String);
+                dataReader = dataProvider.GetDataReader(SQLGet, CommandType.Text, out connection, param);
+
+                if (dataReader.Read())
+                {
+                    acc = new Account
+                    {
+                        AccID = dataReader.GetInt32(0),
+                        Username = dataReader.GetString(1),
+                        Password = dataReader.GetString(2),
+                        CitizenID = dataReader.GetString(3),
+                        Phone = dataReader.GetString(4),
+                        Address = dataReader.GetString(5),
+                        Gender = new Gender
+                        {
+                            GenderId = dataReader.GetInt32(6),
+                            GenderName = dataReader.GetString(7),
+                        },
+                        DOB = dataReader.GetDateTime(8),
+                        Role = new Role
+                        {
+                            RoleId = dataReader.GetInt32(9),
+                            RoleName = dataReader.GetString(10),
+                        }
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                if (dataReader != null && !dataReader.IsClosed)
+                {
+                    dataReader.Close();
+                }
+                if (connection != null)
+                {
+                    CloseConnection();
+                }
+            }
+            return acc;
+        }
+
+
+        public IEnumerable<Account> GetAccountsNoRoom()
+        {
+            IDataReader dataReader = null;
+            string SQLSelect = "Select acc_id, username, password , citizen_id, phone, address, g.gender_id, g.gender_name, DOB, r.role_id, r.role_name " +
+                     "from account a " +
+                     "join Role r on a.role_id = r.role_id " +
+                     "join Gender g on a.gender = g.gender_id " +
+                "WHERE NOT EXISTS( " +
+                "SELECT 1 FROM Room " +
+                " WHERE Room.acc_id = a.acc_id)" +
+                " And a.role_id = 1";
+
+            var accounts = new List<Account>();
+            try
+            {
+                dataReader = dataProvider.GetDataReader(SQLSelect, CommandType.Text, out connection);
+                while (dataReader.Read())
+                {
+                    accounts.Add(new Account
+                    {
+                        AccID = dataReader.GetInt32(0),
+                        Username = dataReader.GetString(1),
+                        Password = dataReader.GetString(2),
+                        CitizenID = dataReader.GetString(3),
+                        Phone = dataReader.GetString(4),
+                        Address = dataReader.GetString(5),
+                        Gender = new Gender
+                        {
+                            GenderId = dataReader.GetInt32(6),
+                            GenderName = dataReader.GetString(7),
+                        },
+                        DOB = dataReader.GetDateTime(8),
+                        Role = new Role
+                        {
+                            RoleId = dataReader.GetInt32(9),
+                            RoleName = dataReader.GetString(10),
+                        }
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                dataReader.Close();
+                CloseConnection();
+            }
+            return accounts;
+        }
+
+
     }
+
+
 
 }

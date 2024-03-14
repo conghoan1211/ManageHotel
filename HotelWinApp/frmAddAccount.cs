@@ -54,7 +54,7 @@ namespace HotelWinApp
                     int Gender = rdFemale.Checked ? 2 : 1;
                     int Role = cbRole.Checked ? 2 : 1;
 
-                    bool existingAcc = AccRepository.IsUsernameExist(Username);
+                    bool existingAcc = AccRepository.IsUsernameExist(Username, -1);
                     if (existingAcc)
                     {
                         MessageBox.Show("Username is already exist", "Notification");

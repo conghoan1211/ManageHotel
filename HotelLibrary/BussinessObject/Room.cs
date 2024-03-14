@@ -9,10 +9,12 @@ namespace HotelLibrary.BussinessObject
     public class Room
     {
         public int RoomID { get; set; }
-        public int AccID { get; set; }
-        public int TypeID { get; set; }
+        public int? AccID { get; set; }
+        public string AccName { get; set; }
+        public TypeRoom TypeRoom { get; set; }
         public int Status { get; set; }
         public int Price { get; set; }
+        public TypeBed TypeBed { get; set; }
 
     }
 }

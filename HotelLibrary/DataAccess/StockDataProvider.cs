@@ -25,6 +25,7 @@ namespace HotelLibrary.DataAccess
         {
             ConnectionString = connectionString;
         }
+
         public SqlParameter CreateParameter(string name, int size, object value, DbType dbType,
             ParameterDirection direction = ParameterDirection.Input)
         {

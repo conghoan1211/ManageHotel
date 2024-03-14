@@ -52,8 +52,8 @@ namespace HotelWinApp
                        Account acc =  AccRepository.Login(Username, Password);
                         if ( acc != null )
                         {
-                            frmAccountDetails frmAccountDetails = new frmAccountDetails();
-                            frmAccountDetails.Show();
+                            frmHotelManagement frmHotelManagement = new frmHotelManagement();
+                            frmHotelManagement.Show();
                             this.Hide();
                         }
                         else
@@ -75,7 +75,7 @@ namespace HotelWinApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Add Account fail");
+                MessageBox.Show(ex.Message, "Access Hotel Management ");
             }
         }
 

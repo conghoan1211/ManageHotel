@@ -56,7 +56,9 @@
             cbRole = new CheckBox();
             btnClose = new Button();
             lbTotalCount = new Label();
-            comboBox1 = new ComboBox();
+            cbFilterRole = new ComboBox();
+            btnSearchName = new Button();
+            cbFilterName = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvEmployeeData).BeginInit();
             ((System.ComponentModel.ISupportInitialize)txtEmpID).BeginInit();
             SuspendLayout();
@@ -65,7 +67,7 @@
             // 
             btnAdd.BackColor = SystemColors.ScrollBar;
             btnAdd.FlatStyle = FlatStyle.System;
-            btnAdd.Location = new Point(426, 242);
+            btnAdd.Location = new Point(435, 242);
             btnAdd.Margin = new Padding(3, 4, 3, 4);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(126, 36);
@@ -195,7 +197,7 @@
             // 
             btnUpdate.BackColor = SystemColors.ScrollBar;
             btnUpdate.FlatStyle = FlatStyle.System;
-            btnUpdate.Location = new Point(696, 242);
+            btnUpdate.Location = new Point(613, 242);
             btnUpdate.Margin = new Padding(3, 4, 3, 4);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new Size(125, 36);
@@ -208,7 +210,7 @@
             // 
             btnLoad.BackColor = SystemColors.ScrollBar;
             btnLoad.FlatStyle = FlatStyle.System;
-            btnLoad.Location = new Point(178, 242);
+            btnLoad.Location = new Point(262, 242);
             btnLoad.Margin = new Padding(3, 4, 3, 4);
             btnLoad.Name = "btnLoad";
             btnLoad.Size = new Size(125, 36);
@@ -221,7 +223,7 @@
             // 
             btnDelete.BackColor = SystemColors.ScrollBar;
             btnDelete.FlatStyle = FlatStyle.System;
-            btnDelete.Location = new Point(978, 242);
+            btnDelete.Location = new Point(794, 242);
             btnDelete.Margin = new Padding(3, 4, 3, 4);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(125, 36);
@@ -234,12 +236,12 @@
             // 
             btnSearch.BackColor = SystemColors.ScrollBar;
             btnSearch.FlatStyle = FlatStyle.System;
-            btnSearch.Location = new Point(1233, 242);
+            btnSearch.Location = new Point(975, 242);
             btnSearch.Margin = new Padding(3, 4, 3, 4);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(125, 36);
             btnSearch.TabIndex = 22;
-            btnSearch.Text = " Search";
+            btnSearch.Text = " Search ID";
             btnSearch.UseVisualStyleBackColor = false;
             btnSearch.Click += btnSearch_Click;
             // 
@@ -253,18 +255,16 @@
             dgvEmployeeData.RowTemplate.Height = 29;
             dgvEmployeeData.Size = new Size(1209, 336);
             dgvEmployeeData.TabIndex = 23;
-            dgvEmployeeData.CellContentClick += dgvEmployeeData_CellContentClick;
+            dgvEmployeeData.CellClick += dgvEmployeeData_CellClick;
             // 
             // rdGenderMale
             // 
             rdGenderMale.AutoSize = true;
-            rdGenderMale.Checked = true;
-            rdGenderMale.Location = new Point(194, 169);
+            rdGenderMale.Location = new Point(192, 169);
             rdGenderMale.Margin = new Padding(3, 4, 3, 4);
             rdGenderMale.Name = "rdGenderMale";
             rdGenderMale.Size = new Size(63, 24);
             rdGenderMale.TabIndex = 24;
-            rdGenderMale.TabStop = true;
             rdGenderMale.Text = "Male";
             rdGenderMale.UseVisualStyleBackColor = true;
             // 
@@ -353,24 +353,53 @@
             lbTotalCount.TabIndex = 33;
             lbTotalCount.Text = "Total: 0 record";
             // 
-            // comboBox1
+            // cbFilterRole
             // 
-            comboBox1.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "Customer", "Employee", "Admin" });
-            comboBox1.Location = new Point(411, 314);
-            comboBox1.Margin = new Padding(3, 4, 3, 4);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(195, 31);
-            comboBox1.TabIndex = 34;
-            comboBox1.Text = "Choose a option";
+            cbFilterRole.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            cbFilterRole.FormattingEnabled = true;
+            cbFilterRole.Items.AddRange(new object[] { "All", "Customer", "Employee", "Admin" });
+            cbFilterRole.Location = new Point(411, 314);
+            cbFilterRole.Margin = new Padding(3, 4, 3, 4);
+            cbFilterRole.Name = "cbFilterRole";
+            cbFilterRole.Size = new Size(195, 31);
+            cbFilterRole.TabIndex = 34;
+            cbFilterRole.Text = "Filter By Role";
+            cbFilterRole.SelectedIndexChanged += cbFilterRole_SelectedIndexChanged;
+            // 
+            // btnSearchName
+            // 
+            btnSearchName.BackColor = SystemColors.ScrollBar;
+            btnSearchName.FlatStyle = FlatStyle.System;
+            btnSearchName.Location = new Point(1145, 242);
+            btnSearchName.Margin = new Padding(3, 4, 3, 4);
+            btnSearchName.Name = "btnSearchName";
+            btnSearchName.Size = new Size(125, 36);
+            btnSearchName.TabIndex = 35;
+            btnSearchName.Text = " Search Name";
+            btnSearchName.UseVisualStyleBackColor = false;
+            btnSearchName.Click += btnSearchName_Click;
+            // 
+            // cbFilterName
+            // 
+            cbFilterName.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            cbFilterName.FormattingEnabled = true;
+            cbFilterName.Items.AddRange(new object[] { "Sort ID Asc", "Sort ID Desc", "Sort Name Asc", "Sort Name Desc" });
+            cbFilterName.Location = new Point(653, 313);
+            cbFilterName.Margin = new Padding(3, 4, 3, 4);
+            cbFilterName.Name = "cbFilterName";
+            cbFilterName.Size = new Size(195, 31);
+            cbFilterName.TabIndex = 36;
+            cbFilterName.Text = "Sort By ID, Name";
+            cbFilterName.SelectedIndexChanged += cbFilterName_SelectedIndexChanged;
             // 
             // frmAccountDetails
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1514, 810);
-            Controls.Add(comboBox1);
+            Controls.Add(cbFilterName);
+            Controls.Add(btnSearchName);
+            Controls.Add(cbFilterRole);
             Controls.Add(lbTotalCount);
             Controls.Add(btnClose);
             Controls.Add(cbRole);
@@ -402,7 +431,8 @@
             Margin = new Padding(3, 4, 3, 4);
             Name = "frmAccountDetails";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Employee Management";
+            Text = "Account Management";
+            Load += frmAccountDetails_Load;
             ((System.ComponentModel.ISupportInitialize)dgvEmployeeData).EndInit();
             ((System.ComponentModel.ISupportInitialize)txtEmpID).EndInit();
             ResumeLayout(false);
@@ -440,6 +470,8 @@
         private CheckBox cbRole;
         private Button btnClose;
         private Label lbTotalCount;
-        private ComboBox comboBox1;
+        private ComboBox cbFilterRole;
+        private Button btnSearchName;
+        private ComboBox cbFilterName;
     }
 }
